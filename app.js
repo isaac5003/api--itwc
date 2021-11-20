@@ -14,7 +14,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.get('/getUsers', async (req, res) => {
     try {
         const result = await db.pool.query('select * from user');
-        //console.log(result);
         res.json({ data: result, total: result.length });
 
     } catch (err) {
@@ -46,8 +45,9 @@ app.put('/userUpdate', async (req, res) => {
 //POST
 app.post('/usersPost', async (req, res) => {
     let user = req.body;
+    let { company_id } = req.body;
     try {
-        const result = await db.pool.query("insert into user (name, phone_number, email, email2, company_id) values (?,?,?,?,?)", [user.name, user.phone_number, user.email, user.email2, user.company_id]);
+        const result = await db.pool.query("insert into user (name, phone_number, email, email2, company_id) values (?,?,?,?,?)", [user.name, user.phone_number, user.email, user.email2, Number(company_id)]);
         res.send(result);
 
     } catch (err) {
@@ -56,19 +56,14 @@ app.post('/usersPost', async (req, res) => {
 });
 
 //DELETE
-app.delete('/userDelete', async (req, res) => {
-    let id_user = req.query.id_user;
+app.delete('/userDelete/:id', async (req, res) => {
+    let id_user = req.params.id;
     try {
-        if (res.body === undefined) {
-            res.status(500).json({
-                succes: false,
-                msg: 'Error'
-            });
-        } else {
-            //delete from user where id_user = 2
-            const result = await db.pool.query("delete from user where id_user = ?", [id_user]);
-            res.send(result);
-        }
+
+        //delete from user where id_user = 2
+        const result = await db.pool.query("delete from user where id_user = ?", [id_user]);
+        res.send({ msg: 'Eliminado', result });
+
     } catch (err) {
         throw err;
     }
@@ -79,7 +74,6 @@ app.get('/getUsersById', async (req, res) => {
     let { id_user } = req.body;
     try {
         const result = await db.pool.query(`select * from user where id_user = ${id_user}`);
-        //console.log(result);
         res.json(result);
 
     } catch (err) {
@@ -95,7 +89,6 @@ app.get('/getUsersById', async (req, res) => {
 app.get('/getCompany', async (req, res) => {
     try {
         const result = await db.pool.query('select * from company');
-        //console.log(result);
         res.json({ data: result, total: result.length });
     } catch (err) {
         throw err;
@@ -105,7 +98,6 @@ app.get('/getCompany', async (req, res) => {
 //POST
 app.post('/companyPost', async (req, res) => {
     let company = req.body;
-    console.log(company);
     try {
         //INSERT INTO company ( name, direction, phone_number, web_site) VALUES ('ATC s.a', 'San Salvador', 85478569, 'www.com');
         const result = await db.pool.query("insert into company (name, direction, phone_numer, web_site) values (?,?,?,?)", [company.name, company.direction, company.phone_numer, company.web_site]);
@@ -119,7 +111,6 @@ app.post('/companyPost', async (req, res) => {
 //PUT
 app.put('/companyUpdate', async (req, res) => {
     let company = req.body;
-    console.log(company);
     try {
         if (res.body === undefined) {
             res.status(500).json({
@@ -138,25 +129,17 @@ app.put('/companyUpdate', async (req, res) => {
 });
 
 //DELETE
-app.delete('/companyDelete', async (req, res) => {
+app.delete('/companyDelete/:id', async (req, res) => {
 
-    let { id_company } = req.body;
-
+    let id_company = req.params.id;
     try {
-        if (res.body === undefined) {
-            res.status(500).json({
-                succes: false,
-                msg: 'Error'
-            });
-        } else {
-            //delete from user where id_company = 2
-            const result = await db.pool.query("delete from company where id_company = ?", [id_company]);
-            res.send(result);
-        }
+        //delete from user where id_company = 2
+        const result = await db.pool.query("delete from company where id_company = ?", [id_company]);
+        res.send(result);
     } catch (err) {
         throw err;
     }
 });
 
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.listen(port);
