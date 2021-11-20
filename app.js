@@ -1,11 +1,11 @@
-const express = require('express')
-const db = require('./database/db')
-const app = express()
-const port = 8080
+const express = require('express');
+const db = require('./database/db');
+const app = express();
+const port = 8080;
 const bodyParser = require("body-parser");
-let cors = require('cors')
+let cors = require('cors');
 
-app.use(cors())
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
